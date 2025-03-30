@@ -1,6 +1,7 @@
 package com.kata.stringcalculator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,5 +44,17 @@ class StringCalculatorShould {
   @Test
   void return_sum_for_input_string_with_single_custom_delimiter() {
     assertThat(stringCalculator.add("//;\n1;2,3\n4")).isEqualTo(10);
+  }
+
+  @Test
+  void throw_execption_when_negative_number_is_present_in_string() {
+    Exception exception =
+        assertThrows(RuntimeException.class, () -> stringCalculator.add("-1,-2,3,4"));
+    assertThat(exception.getMessage()).isEqualTo("negatives not allowed - [-1, -2]");
+
+    exception =
+        assertThrows(
+            RuntimeException.class, () -> stringCalculator.add("//;\n-1;-2,3\n4"));
+    assertThat(exception.getMessage()).isEqualTo("negatives not allowed - [-1, -2]");
   }
 }
