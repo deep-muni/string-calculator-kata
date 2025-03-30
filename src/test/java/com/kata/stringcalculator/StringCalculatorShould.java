@@ -19,4 +19,9 @@ class StringCalculatorShould {
     assertThat(stringCalculator.add("")).isZero();
     assertThat(stringCalculator.add(null)).isZero();
   }
+
+  @Test
+  void return_same_number_for_single_digit_in_string() {
+    assertThat(stringCalculator.add("1")).isEqualTo(1);
+  }
 }
