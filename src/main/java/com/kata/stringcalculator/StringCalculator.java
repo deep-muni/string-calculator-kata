@@ -1,5 +1,6 @@
 package com.kata.stringcalculator;
 
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 public class StringCalculator {
@@ -14,7 +15,13 @@ public class StringCalculator {
       return Integer.parseInt(input);
     }
 
-    return Integer.parseInt(String.valueOf(input.charAt(0)))
-        + Integer.parseInt(String.valueOf(input.charAt(2)));
+    if (input.length() == 3) {
+      return Integer.parseInt(String.valueOf(input.charAt(0)))
+          + Integer.parseInt(String.valueOf(input.charAt(2)));
+    }
+
+    return Arrays.stream(input.split(","))
+        .map(num -> Integer.parseInt(num))
+        .reduce(0, (sum, num) -> sum + num);
   }
 }

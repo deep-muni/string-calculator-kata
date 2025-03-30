@@ -29,4 +29,9 @@ class StringCalculatorShould {
   void return_sum_for_input_with_two_integers() {
     assertThat(stringCalculator.add("1,2")).isEqualTo(3);
   }
+
+  @Test
+  void return_sum_for_input_with_more_than_two_integers() {
+    assertThat(stringCalculator.add("1,2,3,4")).isEqualTo(10);
+  }
 }
