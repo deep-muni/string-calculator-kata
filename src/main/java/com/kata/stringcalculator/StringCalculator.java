@@ -14,27 +14,23 @@ public class StringCalculator {
     }
 
     String delimiters = "[,\n]";
-    String numbers = input;
 
     if (input.startsWith("//")) {
       int separatorIndex = input.indexOf("\n");
       String delimiterPart = input.substring(2, separatorIndex);
 
       delimiters = "[,\n" + delimiterPart + "]";
-      numbers = input.substring(separatorIndex + 1);
+      input = input.substring(separatorIndex + 1);
     }
 
-    List<Integer> negatives =
-        Arrays.stream(numbers.split(delimiters))
-            .map(Integer::parseInt)
-            .filter(num -> num < 0)
-            .toList();
+    List<Integer> numbers = Arrays.stream(input.split(delimiters)).map(Integer::parseInt).toList();
+    List<Integer> negatives = numbers.stream().filter(num -> num < 0).toList();
 
     if (!negatives.isEmpty()) {
       throw new NegativeNumberNotAllowedException(
           String.format("negatives not allowed - %s", negatives));
     }
 
-    return Arrays.stream(numbers.split(delimiters)).map(Integer::parseInt).reduce(0, Integer::sum);
+    return numbers.stream().reduce(0, Integer::sum);
   }
 }
