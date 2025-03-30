@@ -11,16 +11,17 @@ public class StringCalculator {
       return 0;
     }
 
+    String delimiters = "[,\n]";
+    String numbers = input;
+
     if (input.startsWith("//")) {
       int separatorIndex = input.indexOf("\n");
       String delimiterPart = input.substring(2, separatorIndex);
-      String numberPart = input.substring(separatorIndex + 1);
 
-      return Arrays.stream(numberPart.split("[,\n" + delimiterPart + "]"))
-          .map(Integer::parseInt)
-          .reduce(0, Integer::sum);
+      delimiters = "[,\n" + delimiterPart + "]";
+      numbers = input.substring(separatorIndex + 1);
     }
 
-    return Arrays.stream(input.split("[,\n]")).map(Integer::parseInt).reduce(0, Integer::sum);
+    return Arrays.stream(numbers.split(delimiters)).map(Integer::parseInt).reduce(0, Integer::sum);
   }
 }
