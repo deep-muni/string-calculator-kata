@@ -56,7 +56,8 @@ class StringCalculatorShould {
 
     exception =
         assertThrows(
-            NegativeNumberNotAllowedException.class, () -> stringCalculator.evaluate("//;\n-1;-2,3\n4"));
+            NegativeNumberNotAllowedException.class,
+            () -> stringCalculator.evaluate("//;\n-1;-2,3\n4"));
     assertThat(exception.getMessage()).isEqualTo("negatives not allowed - [-1, -2]");
   }
 
