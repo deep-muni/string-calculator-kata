@@ -10,6 +10,11 @@ public class StringCalculator {
       return 0;
     }
 
-    return Integer.parseInt(input);
+    if (input.length() == 1) {
+      return Integer.parseInt(input);
+    }
+
+    return Integer.parseInt(String.valueOf(input.charAt(0)))
+        + Integer.parseInt(String.valueOf(input.charAt(2)));
   }
 }

@@ -24,4 +24,9 @@ class StringCalculatorShould {
   void return_same_number_for_single_digit_in_string() {
     assertThat(stringCalculator.add("1")).isEqualTo(1);
   }
+
+  @Test
+  void return_sum_for_input_with_two_integers() {
+    assertThat(stringCalculator.add("1,2")).isEqualTo(3);
+  }
 }
