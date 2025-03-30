@@ -1,17 +1,18 @@
 package com.kata.stringcalculator;
 
+import static java.util.Arrays.stream;
+
 import com.kata.stringcalculator.exceptions.NegativeNumberNotAllowedException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class StringCalculator {
 
   public static final int MAXIMUM = 1000;
   private static final String NEW_LINE = "\n";
-  private static final String MULTIPLICATION = "*";
   private static final String DELIMITER_SEPARATOR = "|";
   private static final String DEFAULT_DELIMITERS = ",|\n";
   private static final String CUSTOM_DELIMITER_PREFIX = "//";
@@ -26,37 +27,33 @@ public class StringCalculator {
     return num > MAXIMUM;
   }
 
-  private static boolean shouldMultiply(List<String> delimiters) {
-    return delimiters.size() == 1 && Pattern.matches(delimiters.getLast(), MULTIPLICATION);
+  private static boolean shouldMultiply(String delimiters) {
+    List<String> list = Arrays.asList(delimiters.split(Pattern.quote(DELIMITER_SEPARATOR)));
+    return list.size() == 3 && Pattern.matches(list.getLast(), "*");
   }
 
-  private static List<String> extractDelimiters(String input) {
+  private static String extractDelimiters(String input) {
     if (!containsCustomDelimiter(input)) {
-      return new ArrayList<>();
+      return DEFAULT_DELIMITERS;
     }
 
     int separatorIndex = input.indexOf(NEW_LINE);
     String delimiterPart = input.substring(2, separatorIndex);
 
-    return Arrays.stream(delimiterPart.split(CUSTOM_DELIMITER_REGEX))
-        .filter(StringUtils::isNotBlank)
-        .map(Pattern::quote)
-        .toList();
+    return DEFAULT_DELIMITERS
+        + DELIMITER_SEPARATOR
+        + stream(delimiterPart.split(CUSTOM_DELIMITER_REGEX))
+            .filter(StringUtils::isNotBlank)
+            .map(Pattern::quote)
+            .collect(Collectors.joining(DELIMITER_SEPARATOR));
   }
 
-  private static List<Integer> extractValidNumbers(String input, List<String> delimiters) {
+  private static List<Integer> extractValidNumbers(String input, String delimiters) {
     if (containsCustomDelimiter(input)) {
-      int separatorIndex = input.indexOf(NEW_LINE);
-      input = input.substring(separatorIndex + 1);
+      input = input.substring(input.indexOf(NEW_LINE) + 1);
     }
 
-    String delimiter = DEFAULT_DELIMITERS;
-
-    if (!delimiters.isEmpty()) {
-      delimiter += DELIMITER_SEPARATOR + String.join(DELIMITER_SEPARATOR, delimiters);
-    }
-
-    return Arrays.stream(input.split(delimiter))
+    return stream(input.split(delimiters))
         .map(Integer::parseInt)
         .filter(num -> !isGreaterThanMaximum(num))
         .toList();
@@ -72,24 +69,20 @@ public class StringCalculator {
   }
 
   private static int compute(List<Integer> numbers, boolean shouldMultiply) {
-    if (shouldMultiply) {
-      return numbers.stream().reduce(1, (mul, num) -> mul * num);
-    }
-
-    return numbers.stream().reduce(0, Integer::sum);
+    return shouldMultiply
+        ? numbers.stream().reduce(1, (mul, num) -> mul * num)
+        : numbers.stream().reduce(0, Integer::sum);
   }
 
   public int evaluate(String input) {
-
     if (StringUtils.isBlank(input)) {
       return 0;
     }
 
-    List<String> delimiters = extractDelimiters(input);
+    String delimiters = extractDelimiters(input);
     List<Integer> numbers = extractValidNumbers(input, delimiters);
 
     validateNumbers(numbers);
-
     return compute(numbers, shouldMultiply(delimiters));
   }
 }
