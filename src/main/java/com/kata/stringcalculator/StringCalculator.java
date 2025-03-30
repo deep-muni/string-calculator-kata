@@ -1,5 +1,6 @@
 package com.kata.stringcalculator;
 
+import com.kata.stringcalculator.exceptions.NegativeNumberNotAllowedException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +31,8 @@ public class StringCalculator {
             .toList();
 
     if (!negatives.isEmpty()) {
-      throw new RuntimeException(String.format("negatives not allowed - %s", negatives));
+      throw new NegativeNumberNotAllowedException(
+          String.format("negatives not allowed - %s", negatives));
     }
 
     return Arrays.stream(numbers.split(delimiters)).map(Integer::parseInt).reduce(0, Integer::sum);
