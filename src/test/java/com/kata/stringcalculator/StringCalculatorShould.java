@@ -65,4 +65,9 @@ class StringCalculatorShould {
     assertThat(stringCalculator.add("1\n1000,3000\n4")).isEqualTo(1005);
     assertThat(stringCalculator.add("//;\n1;1000,3000\n4")).isEqualTo(1005);
   }
+
+  @Test
+  void return_sum_for_input_string_with_single_custom_delimiter_special_character() {
+    assertThat(stringCalculator.add("//.\n1.2,3\n4")).isEqualTo(10);
+  }
 }
