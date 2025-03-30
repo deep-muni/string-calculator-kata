@@ -31,6 +31,6 @@ public class StringCalculator {
           String.format("negatives not allowed - %s", negatives));
     }
 
-    return numbers.stream().reduce(0, Integer::sum);
+    return numbers.stream().filter(num -> num <= 1000).reduce(0, Integer::sum);
   }
 }

@@ -59,4 +59,10 @@ class StringCalculatorShould {
             NegativeNumberNotAllowedException.class, () -> stringCalculator.add("//;\n-1;-2,3\n4"));
     assertThat(exception.getMessage()).isEqualTo("negatives not allowed - [-1, -2]");
   }
+
+  @Test
+  void return_sum_for_input_string_ignoring_numbers_above_1000() {
+    assertThat(stringCalculator.add("1\n1000,3000\n4")).isEqualTo(1005);
+    assertThat(stringCalculator.add("//;\n1;1000,3000\n4")).isEqualTo(1005);
+  }
 }
