@@ -17,7 +17,42 @@ public class StringCalculator {
   private static final List<String> DEFAULT_DELIMITERS = Arrays.asList(",", NEW_LINE);
   private static final String NEGATIVES_NOT_ALLOWED_MESSAGE = "negatives not allowed - %s";
 
-  public int add(String input) {
+  private static void validateNumbers(List<Integer> numbers) {
+    List<Integer> negatives = numbers.stream().filter(num -> num < 0).toList();
+
+    if (!negatives.isEmpty()) {
+      throw new NegativeNumberNotAllowedException(
+          String.format(NEGATIVES_NOT_ALLOWED_MESSAGE, negatives));
+    }
+  }
+
+  private static int compute(boolean shouldMultiply, List<Integer> numbers) {
+    if (shouldMultiply) {
+      return numbers.stream().reduce(1, (mul, num) -> mul * num);
+    }
+
+    return numbers.stream().reduce(0, Integer::sum);
+  }
+
+  private static List<String> extractDelimiters(String input) {
+    if (!containsCustomDelimiter(input)) {
+      return DEFAULT_DELIMITERS;
+    }
+
+    int separatorIndex = input.indexOf(NEW_LINE);
+    String delimiterPart = input.substring(2, separatorIndex);
+
+    return Arrays.stream(delimiterPart.split(CUSTOM_DELIMITER_REGEX))
+        .filter(StringUtils::isNotBlank)
+        .map(Pattern::quote)
+        .toList();
+  }
+
+  private static boolean containsCustomDelimiter(String input) {
+    return input.startsWith(CUSTOM_DELIMITER_PREFIX);
+  }
+
+  public int evaluate(String input) {
 
     if (StringUtils.isBlank(input)) {
       return 0;
@@ -26,16 +61,9 @@ public class StringCalculator {
     boolean shouldMultiply = false;
 
     List<String> delimiters = new ArrayList<>(DEFAULT_DELIMITERS);
+    List<String> customDelimiters = extractDelimiters(input);
 
-    if (input.startsWith(CUSTOM_DELIMITER_PREFIX)) {
-      int separatorIndex = input.indexOf(NEW_LINE);
-      String delimiterPart = input.substring(2, separatorIndex);
-
-      List<String> customDelimiters =
-          Arrays.stream(delimiterPart.split(CUSTOM_DELIMITER_REGEX))
-              .filter(StringUtils::isNotBlank)
-              .map(Pattern::quote)
-              .toList();
+    if (containsCustomDelimiter(input)) {
 
       if (customDelimiters.size() == 1
           && Pattern.matches(customDelimiters.getFirst(), MULTIPLICATION)) {
@@ -43,22 +71,18 @@ public class StringCalculator {
       }
 
       delimiters.addAll(customDelimiters);
+      int separatorIndex = input.indexOf(NEW_LINE);
       input = input.substring(separatorIndex + 1);
     }
 
-    String delimiter = String.join(DELIMITER_SEPARATOR, delimiters);
-    List<Integer> numbers = Arrays.stream(input.split(delimiter)).map(Integer::parseInt).toList();
-    List<Integer> negatives = numbers.stream().filter(num -> num < 0).toList();
+    List<Integer> numbers =
+        Arrays.stream(input.split(String.join(DELIMITER_SEPARATOR, delimiters)))
+            .map(Integer::parseInt)
+            .filter(num -> num <= 1000)
+            .toList();
 
-    if (!negatives.isEmpty()) {
-      throw new NegativeNumberNotAllowedException(
-          String.format(NEGATIVES_NOT_ALLOWED_MESSAGE, negatives));
-    }
+    validateNumbers(numbers);
 
-    if (shouldMultiply) {
-      return numbers.stream().filter(num -> num <= 1000).reduce(1, (mul, num) -> mul * num);
-    }
-
-    return numbers.stream().filter(num -> num <= 1000).reduce(0, Integer::sum);
+    return compute(shouldMultiply, numbers);
   }
 }
