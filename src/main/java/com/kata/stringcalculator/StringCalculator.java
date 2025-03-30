@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class StringCalculator {
@@ -20,9 +19,15 @@ public class StringCalculator {
 
     if (input.startsWith("//")) {
       int separatorIndex = input.indexOf("\n");
-      String customDelimiter = input.substring(2, separatorIndex);
+      String delimiterPart = input.substring(2, separatorIndex);
 
-      delimiters.add(Pattern.quote(customDelimiter));
+      List<String> customDelimiters =
+          Arrays.stream(delimiterPart.split("[\\[\\]]+"))
+              .filter(StringUtils::isNotBlank)
+              .map(Pattern::quote)
+              .toList();
+
+      delimiters.addAll(customDelimiters);
       input = input.substring(separatorIndex + 1);
     }
 

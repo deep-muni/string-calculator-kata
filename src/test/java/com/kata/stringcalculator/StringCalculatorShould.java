@@ -70,4 +70,9 @@ class StringCalculatorShould {
   void return_sum_for_input_string_with_single_custom_delimiter_special_character() {
     assertThat(stringCalculator.add("//.\n1.2,3\n4")).isEqualTo(10);
   }
+
+  @Test
+  void return_sum_for_input_string_with_multiple_custom_delimiter_with_any_length() {
+    assertThat(stringCalculator.add("//[;;;][*]\n1;;;2,3\n4*5")).isEqualTo(15);
+  }
 }
