@@ -75,4 +75,11 @@ class StringCalculatorShould {
   void return_sum_for_input_string_with_multiple_custom_delimiter_with_any_length() {
     assertThat(stringCalculator.add("//[;;;][*]\n1;;;2,3\n4*5")).isEqualTo(15);
   }
+
+  @Test
+  void return_multiplication_of_numbers_when_custom_delimiter_is_asterisk() {
+    assertThat(stringCalculator.add("//*\n1*2,3\n4")).isEqualTo(24);
+    assertThat(stringCalculator.add("//[*]\n1*2,3\n4")).isEqualTo(24);
+    assertThat(stringCalculator.add("//[*]\n1*2,3\n4*1000\n1001")).isEqualTo(24000);
+  }
 }

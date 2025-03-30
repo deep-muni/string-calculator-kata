@@ -15,6 +15,8 @@ public class StringCalculator {
       return 0;
     }
 
+    boolean shouldMultiply = false;
+
     List<String> delimiters = new ArrayList<>(Arrays.asList(",", "\n"));
 
     if (input.startsWith("//")) {
@@ -27,6 +29,11 @@ public class StringCalculator {
               .map(Pattern::quote)
               .toList();
 
+      if (customDelimiters.size() == 1
+          && Pattern.matches(customDelimiters.getFirst(), "*")) {
+        shouldMultiply = true;
+      }
+
       delimiters.addAll(customDelimiters);
       input = input.substring(separatorIndex + 1);
     }
@@ -38,6 +45,10 @@ public class StringCalculator {
     if (!negatives.isEmpty()) {
       throw new NegativeNumberNotAllowedException(
           String.format("negatives not allowed - %s", negatives));
+    }
+
+    if (shouldMultiply) {
+      return numbers.stream().filter(num -> num <= 1000).reduce(1, (mul, num) -> mul * num);
     }
 
     return numbers.stream().filter(num -> num <= 1000).reduce(0, Integer::sum);
