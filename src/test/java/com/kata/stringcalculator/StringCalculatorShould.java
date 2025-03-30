@@ -39,4 +39,9 @@ class StringCalculatorShould {
   void return_sum_for_input_string_with_new_line_as_delimiter() {
     assertThat(stringCalculator.add("1\n2,3\n4")).isEqualTo(10);
   }
+
+  @Test
+  void return_sum_for_input_string_with_single_custom_delimiter() {
+    assertThat(stringCalculator.add("//;\n1;2,3\n4")).isEqualTo(10);
+  }
 }
